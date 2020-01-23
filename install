@@ -1,0 +1,52 @@
+yum install java-1.8.0-openjdk
+sudo yum install java-1.8.0-openjdk.x86_64 -y
+cd /opt
+yum install tar wget -y
+#wget https://sonatype-download.global.ssl.fastly.net/nexus/3/nexus-3.0.2-02-unix.tar.gz
+wget http://download.sonatype.com/nexus/3/nexus-3.15.2-01-unix.tar.gz
+
+ 
+
+tar -zxvf nexus-3.15.2-01-unix.tar.gz
+mv /opt/nexus-3.15.2-01 /opt/nexus
+
+ 
+
+#As a good security practice, Nexus is not advised to run nexus service as a root user, so create a new user called nexus and grant sudo access to manage nexus services as follows
+
+ 
+
+useradd nexus
+
+ 
+
+#Give the sudo access to nexus user
+visudo
+nexus   ALL=(ALL)       NOPASSWD: ALL
+
+ 
+
+#Change the owner and group permissions to /opt/nexus and /opt/sonatype-work directories.
+chown -R nexus:nexus /opt/nexus
+chown -R nexus:nexus /opt/sonatype-work
+
+ 
+
+#Open /opt/nexus/bin/nexus.rc file, uncomment run_as_user parameter and set run_as_user as nexus.
+vi /opt/nexus/bin/nexus.rc
+
+ 
+
+#Add nexus as a service at boot time
+ln -s /opt/nexus/bin/nexus /etc/init.d/nexus
+
+ 
+
+#Switch as a nexus user and start the nexus service as follows.
+
+ 
+
+su - nexus
+#Enable the nexus services
+sudo systemctl enable nexus
+sudo systemctl start nexus 
